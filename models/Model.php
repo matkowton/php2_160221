@@ -1,5 +1,9 @@
 <?php
 
+namespace app\models;
+
+use app\interfaces\ModelInterface;
+use app\services\Db;
 
 abstract class Model implements ModelInterface
 {
@@ -11,7 +15,7 @@ abstract class Model implements ModelInterface
      */
     public function __construct()
     {
-        $this->db = new Db();
+        $this->db = Db::getInstance();
         $this->tableName = $this->getTableName();
     }
 
@@ -23,13 +27,13 @@ abstract class Model implements ModelInterface
 
     public function getById(int $id)
     {
-        $sql = "SELECT * FROM {$this->tableName} WHERE id = {$id}";
-        return $this->db->queryOne($sql);
+        $sql = "SELECT * FROM {$this->tableName} WHERE id = :id";
+        return $this->db->queryOne($sql, [':id' => $id]);
     }
 
-    public function delete(int $id)
+    public function delete()
     {
-        $sql = "DELETE FROM {$this->tableName} WHERE id = {$id}";
-        return $this->db->execute($sql);
+        $sql = "DELETE FROM {$this->tableName} WHERE id = :id";
+        return $this->db->execute($sql, [':id' => $this->id]);
     }
 }

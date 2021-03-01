@@ -1,5 +1,6 @@
 <?php
 
+namespace app\interfaces;
 
 interface ModelInterface
 {
@@ -7,7 +8,7 @@ interface ModelInterface
 
     public function getById(int $id);
 
-    public function delete(int $id);
+    public function delete();
 
     public function getTableName(): string;
 }
