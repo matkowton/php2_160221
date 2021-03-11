@@ -2,8 +2,8 @@
 
 require "../config/main.php";
 require "../services/Autoloader.php";
-
 spl_autoload_register([new \app\services\Autoloader(), 'loadClass']);
+session_start();
 
 if (!$requestUri = preg_replace(['#^/#', '#[?].*#', '#/$#'], "", $_SERVER['REQUEST_URI'])) {
     $requestUri = DEFAULT_CONTROLLER;

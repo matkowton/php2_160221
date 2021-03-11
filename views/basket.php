@@ -6,13 +6,13 @@
         <?php foreach ($basket as $item): ?>
             <tr>
                 <td>
-                    <?= $item['product']['title'] ?>
+                    <?= $item['product']->title ?>
                 </td>
                 <td>
                     <?= $item['qty'] ?>
                 </td>
                 <td>
-                    <a href="/basket/remove?id=<?= $item['product']['id'] ?>">Удалить</a>
+                    <a href="/basket/remove?id=<?= $item['product']->id ?>">Удалить</a>
                 </td>
             </tr>
         <?php endforeach; ?>

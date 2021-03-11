@@ -1,23 +1,36 @@
 <?php
 
 
-namespace app\records\models;
+namespace app\models\records;
 
 class User extends Record
 {
-    public $name;
-    public $email;
+    public $id;
+    public $login;
+    public $password;
 
-    public function getByLogin(string $login)
-    {
-        $sql = "SELECT * FROM {$this->tableName} WHERE login = {$login}";
-        return $this->db->queryOne($sql);
+    public static function getByLoginPassword(string $login, string $password) {
+        $tableName = static::getTableName();
+        $sql = "SELECT * FROM {$tableName} WHERE login = :login AND password = :password";
+        return static::getQuery($sql,[':login' => $login, ':password' => $password]);
     }
 
-    public function getTableName(): string
+    public static function getTableName(): string
     {
         return 'users';
     }
 
+    public static function authById(int $userId): bool
+    {
+        $_SESSION['user_id'] = $userId;
+        return true;
+    }
 
+    public static function getCurrentUser(): ?array
+    {
+        if ($userId = $_SESSION['user_id']) {
+            return static::getById($userId);
+        }
+        return null;
+    }
 }

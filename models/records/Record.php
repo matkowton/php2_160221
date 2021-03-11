@@ -9,6 +9,11 @@ abstract class Record implements RecordInterface
 {
     protected $db;
     protected $tableName;
+    protected $excludedProperties =
+        [
+            'db',
+            'tableName'
+        ];
 
     /**
      * Product constructor.
@@ -19,11 +24,18 @@ abstract class Record implements RecordInterface
         $this->tableName = $this->getTableName();
     }
 
-    public static function getAll()
+    public static function getAll(array $ids = [])
     {
         $tableName = static::getTableName();
-        $sql = "SELECT * FROM {$tableName}";
-        return static::getQuery($sql);
+        $where = '';
+
+        if(!empty($ids)) {
+            $placeholders = str_repeat('?,', count($ids) - 1) . '?';
+            $where = " WHERE id IN ({$placeholders})";
+        }
+
+        $sql = "SELECT * FROM {$tableName}" . $where;
+        return static::getQuery($sql, $ids);
     }
 
     public static function getById(int $id)
@@ -47,7 +59,7 @@ abstract class Record implements RecordInterface
         $columns = [];
 
         foreach ($this as $key => $value) {
-            if(in_array($key,['db', 'tableName'])) {
+            if(in_array($key, $this->excludedProperties)) {
                 continue;
             }
 
@@ -65,12 +77,33 @@ abstract class Record implements RecordInterface
 
     protected function update()
     {
+        $tableName = static::getTableName();
 
+        $params = [];
+        $setSection = [];
+
+        foreach ($this as $key => $value) {
+            if(in_array($key, $this->excludedProperties)) {
+                continue;
+            }
+
+            $params[":{$key}"] = $value;
+            $setSection[] = "`{$key}` = :{$key}";
+        }
+
+        $setSection = implode(", ", $setSection);
+
+        $sql = "UPDATE {$tableName} SET {$setSection}";
+        $this->db->execute($sql, $params);
     }
 
     public function save()
     {
-
+        if(is_null($this->id)) {
+            $this->insert();
+        }else {
+            $this->update();
+        }
     }
 
 
