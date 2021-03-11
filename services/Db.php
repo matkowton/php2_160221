@@ -1,6 +1,7 @@
 <?php
 
 namespace app\services;
+
 use app\traits\SingletonTrait;
 
 class Db
@@ -17,6 +18,17 @@ class Db
     ];
 
     protected $connection = null;
+
+
+    public function log()
+    {
+
+    }
+
+    public function notify()
+    {
+
+    }
 
     protected function getConnection()
     {
@@ -59,15 +71,15 @@ class Db
         return $pdoStatement;
     }
 
-    public function queryOne(string $sql, array $params = []) : array
+    public function queryOne(string $sql, array $params = []): array
     {
         return $this->queryAll($sql, $params)[0];
     }
 
     public function queryAll(string $sql, array $params = [], $className = null): array
     {
-        $pdoStatement =  $this->query($sql, $params);
-        if(isset($className)) {
+        $pdoStatement = $this->query($sql, $params);
+        if (isset($className)) {
             $pdoStatement->setFetchMode(
                 \PDO::FETCH_CLASS,
                 $className

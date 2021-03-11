@@ -106,7 +106,6 @@ abstract class Record implements RecordInterface
         }
     }
 
-
     protected static function getQuery(string $sql, array $params = []) {
         return Db::getInstance()->queryAll($sql, $params, get_called_class());
     }
