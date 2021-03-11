@@ -1,15 +1,15 @@
 <?php
 
-namespace app\models;
+namespace app\models\records;
 
-class Product extends Model
+class Product extends Record
 {
     public $id;
     public $title;
     public $description;
     public $price;
 
-    public function getTableName(): string
+    public static function getTableName(): string
     {
         return 'products';
     }

@@ -64,13 +64,26 @@ class Db
         return $this->queryAll($sql, $params)[0];
     }
 
-    public function queryAll(string $sql, array $params = []): array
+    public function queryAll(string $sql, array $params = [], $className = null): array
     {
-        return $this->query($sql, $params)->fetchAll();
+        $pdoStatement =  $this->query($sql, $params);
+        if(isset($className)) {
+            $pdoStatement->setFetchMode(
+                \PDO::FETCH_CLASS,
+                $className
+            );
+        }
+        return $pdoStatement->fetchAll();
     }
 
     public function execute(string $sql, array $params = []): int
     {
         return $this->query($sql, $params)->rowCount();
     }
+
+    public function getLastInsertId()
+    {
+        return $this->getConnection()->lastInsertId();
+    }
+
 }
