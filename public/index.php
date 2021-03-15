@@ -19,5 +19,6 @@ $controllerClass = "app\controllers\\" . ucfirst($controllerName) . "Controller"
 if(class_exists($controllerClass)) {
     /** @var \app\controllers\ProductController $controller */
     $controller = new $controllerClass(new \app\services\renderers\TemplateRenderer());
+    //$controller = new $controllerClass(new \app\services\renderers\TwigRenderer());
     $controller->run($action);
 }

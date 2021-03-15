@@ -1,0 +1,13 @@
+<div class="row row-cols-1 row-cols-md-3">
+    {% for product in products %}
+        <div class="card mb-3" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.itle }} </h5>
+                <p class="card-text">{{ product.description}} </p>
+            </div>
+            <div class="card-footer">
+                <a href="/product/card?id={{ product.id }}" class="bbb">Посмотреть</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>

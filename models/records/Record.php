@@ -5,6 +5,14 @@ namespace app\models\records;
 use app\interfaces\RecordInterface;
 use app\services\Db;
 
+/**
+ * Class Record
+ * Абстрактный класс, описывающий поведение объектов, получающий и содержащих данные из БД
+ * @package app\models\records
+ * @property Db $db Объект, обеспечивающий работу с БД
+ * @property string $tableName Имя таблицы в БД, с которой работает данный класс
+ * @property array $excludedProperties Перечень свойств объекта, которые следует исключать при построении запросов на INSERT/UPDATE
+ */
 abstract class Record implements RecordInterface
 {
     protected $db;
@@ -24,6 +32,7 @@ abstract class Record implements RecordInterface
         $this->tableName = $this->getTableName();
     }
 
+    /** Получить все записи из таблицы (с возможностью указать конкретный перечень ид-ов) */
     public static function getAll(array $ids = [])
     {
         $tableName = static::getTableName();
@@ -38,6 +47,7 @@ abstract class Record implements RecordInterface
         return static::getQuery($sql, $ids);
     }
 
+    /** Получить конкретную запись по ее ИД */
     public static function getById(int $id)
     {
         $tableName = static::getTableName();
@@ -45,12 +55,14 @@ abstract class Record implements RecordInterface
         return static::getQuery($sql, [':id' => $id])[0];
     }
 
+    /** удалить запись из БД, с ид-м текущего объекта */
     public function delete()
     {
         $sql = "DELETE FROM {$this->tableName} WHERE id = :id";
         return $this->db->execute($sql, [':id' => $this->id]);
     }
 
+    /** Вставить новую запись в таблицу, на основе свойств текущего объекта */
     protected function insert()
     {
         $tableName = static::getTableName();
@@ -75,6 +87,7 @@ abstract class Record implements RecordInterface
         $this->id = $this->db->getLastInsertId();
     }
 
+    /** Обновить запись в таблице, на основе данных текущего объекта */
     protected function update()
     {
         $tableName = static::getTableName();
@@ -97,6 +110,7 @@ abstract class Record implements RecordInterface
         $this->db->execute($sql, $params);
     }
 
+    /** Сохранить состояние объекта (обновить или создать новую запись) */
     public function save()
     {
         if(is_null($this->id)) {
@@ -106,6 +120,7 @@ abstract class Record implements RecordInterface
         }
     }
 
+    /** Выполнить запрос, получив в результате набор объектов текущего класса */
     protected static function getQuery(string $sql, array $params = []) {
         return Db::getInstance()->queryAll($sql, $params, get_called_class());
     }

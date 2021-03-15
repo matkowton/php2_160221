@@ -4,56 +4,41 @@
 namespace app\controllers;
 
 
-use app\models\records\Product;
+use app\interfaces\RendererInterface;
+use app\models\Basket;
 
 class BasketController extends Controller
 {
-    public function actionIndex()
+    /** @var Basket */
+    protected $basket;
+
+    public function __construct(RendererInterface $renderer)
     {
-        $basket = [];
-        if (!empty($_SESSION['basket'])) {
-            $productIds = array_filter(
-                array_keys($_SESSION['basket']),
-                function ($element) {
-                    return is_int($element);
-                }
-            );
-
-            $products = Product::getAll($productIds);
-            foreach ($products as $product) {
-                $basket[] = [
-                    'product' => $product,
-                    'qty' => $_SESSION['basket'][$product->id]
-                ];
-            }
-        }
-
-        echo $this->render('basket', compact('basket'));
+        parent::__construct($renderer);
+        $this->basket = new Basket();
     }
 
+
+    /** Страничка корзины */
+    public function actionIndex()
+    {
+        echo $this->render('basket', ['basket' => $this->basket->getAll()]);
+    }
+
+    /** Добаить товар в корзину */
     public function actionAdd()
     {
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $productId = $_POST['product_id'];
-            $productQty = $_POST['qty'];
-
-            if(isset($_SESSION['basket'][$productId])) {
-                $_SESSION['basket'][$productId] += $productQty;
-            } else {
-                $_SESSION['basket'][$productId] = $productQty;
-            }
+            $this->basket->add($_POST['product_id'], $_POST['qty']);
         }
-
         echo json_encode(['status' => 'success', 'message' => 'товар успешно добавлен в корзину']);
     }
 
+    /** Удалить товар из корзины */
     public function actionRemove()
     {
         if(isset($_GET['id'])){
-            $productId = $_GET['id'];
-            if(isset($_SESSION['basket'][$productId])){
-                unset($_SESSION['basket'][$productId]);
-            }
+            $this->basket->remove($_GET['id']);
         }
         $this->redirectToReferer();
     }

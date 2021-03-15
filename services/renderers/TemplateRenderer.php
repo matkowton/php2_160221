@@ -10,7 +10,6 @@ class TemplateRenderer implements RendererInterface
 {
     public function render(string $templateName, array $params = []): string
     {
-        //extract(prepareViewParams());
         extract($params);
         ob_start();
         include VIEWS_DIR . $templateName . ".php";

@@ -2,18 +2,30 @@
 
 
 namespace app\controllers;
+use app\interfaces\RendererInterface;
+use app\services\Hash;
 use app\models\records\User;
 
 class AuthController extends Controller
 {
+    /** @var Hash  */
+    protected $hash;
+
+    public function __construct(RendererInterface $renderer)
+    {
+        parent::__construct($renderer);
+        $this->hash = new Hash();
+    }
+
+    /** Страничка логина/авторизация */
     public function actionLogin()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $login = $_POST['login'];
-            $password = $this->getHash($_POST['password']);
+            $password = $this->hash->make($_POST['password']);
 
             if ($user = User::getByLoginPassword($login, $password)) {
-                User::authById($user['id']);
+                $this->auth->authById($user->id);
                 $this->redirect("/");
             } else {
                 echo "Логин/пароль не верный!!!";
@@ -22,18 +34,16 @@ class AuthController extends Controller
         echo $this->render('login');
     }
 
+    /** Выход */
     public function actionLogout()
     {
-        session_start();
-        $_SESSION['user_id'] = null;
-        session_destroy();
+        $this->auth->logout();
         $this->redirectToReferer();
     }
 
+    /** Регистрация нового пользователя */
     public function actionRegister()
     {
-        session_start();
-
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $login = $_POST['login'];
             $password = $_POST['password'];
@@ -41,18 +51,12 @@ class AuthController extends Controller
             if ($password == $confirmPassword) {
                 $user = new User();
                 $user->login = $login;
-                $user->password = $this->getHash($password);
+                $user->password = $this->hash->make($password);
                 $user->save();
-                User::authById($user->id);
+                $this->auth->authById($user->id);
                 $this->redirect("/profile");
             }
         }
         echo $this->render('register');
-    }
-
-    protected function getHash(string $string):string{
-        $salt1 = 'trgf746';
-        $salt2 = 'p58fbnn28';
-        return md5($salt1 . $string . $salt2);
     }
 }

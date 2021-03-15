@@ -6,7 +6,9 @@
             "email": "matkowton@gmail.com"
         }
     ],
+    "description": "",
     "require": {
-        "twig/twig": "^3.0"
+        "twig/twig": "^3.0",
+      "ext-json": "*"
     }
 }
