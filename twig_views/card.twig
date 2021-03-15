@@ -2,7 +2,7 @@
 <p>{{ product.description}}</p>
 <p>Цена: {{ product.price }} </p>
 <form id="add_to_cart_frm" action="" class="row g-2" method="post">
-    <input name="product_id" value="<?= $product->id ?>" type="hidden">
+    <input name="product_id" value="{{ product.id }}" type="hidden">
     <div class="col-auto">
         <input id="qty_input" type="number" value="0" name="qty" class="form-control">
     </div>

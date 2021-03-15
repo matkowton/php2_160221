@@ -9,10 +9,8 @@ class Product extends Record
     public $description;
     public $price;
 
-    public static function getTableName(): string
+    public function getShortDescription()
     {
-        return 'products';
+        
     }
-
-
 }

@@ -1,6 +1,7 @@
 <?php
 namespace app\controllers;
 
+use app\exceptions\ActionNotFoundException;
 use app\interfaces\RendererInterface;
 use app\models\records\Menu;
 use app\models\Auth;
@@ -46,21 +47,21 @@ abstract class Controller
         if (method_exists($this, $method)) {
             $this->$method();
         } else {
-            echo "404";
+            throw new ActionNotFoundException("Указанный action не найден!");
         }
     }
 
     /** Подготовка параметров для лэйаута */
     protected function getLayoutParams(): array
     {
-        $menuAccessLevel = [0];
+       /* $menuAccessLevel = [0];
         if ($user = $this->auth->getCurrentUser()) {
             $menuAccessLevel[] = 2;
         } else {
             $menuAccessLevel[] = 1;
         }
         $menu = Menu::getOrderedList($menuAccessLevel);
-        return ['menu' => $menu];
+        return ['menu' => $menu];*/
     }
 
     /** Логика рендеренга (с лэйаутом/без) */
@@ -68,7 +69,7 @@ abstract class Controller
     {
         $content = $this->renderer->render($template, $params);
         if ($this->useLayout) {
-            $params = $this->getLayoutParams();
+            //$params = $this->getLayoutParams();
             $params['content'] = $content;
             return $this->renderer->render('layouts/' . $this->defaultLayout, $params);
         }

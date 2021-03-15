@@ -7,6 +7,11 @@ namespace app\controllers;
 use app\interfaces\RendererInterface;
 use app\models\Basket;
 
+/**
+ * Контроллер управления функционалом корзины
+ * Class BasketController
+ * @package app\controllers
+ */
 class BasketController extends Controller
 {
     /** @var Basket */

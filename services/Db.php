@@ -19,17 +19,6 @@ class Db
 
     protected $connection = null;
 
-
-    public function log()
-    {
-
-    }
-
-    public function notify()
-    {
-
-    }
-
     protected function getConnection()
     {
         if (is_null($this->connection)) {

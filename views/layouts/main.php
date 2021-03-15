@@ -7,7 +7,7 @@
 <div class="row justify-content-center">
     <div class="col-md-6">
         <header>
-            <?php include VIEWS_DIR . "blocks/menu.php";?>
+            <?php //include VIEWS_DIR . "blocks/menu.php";?>
         </header>
         <main>
             <?=$content?>

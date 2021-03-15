@@ -6,6 +6,13 @@ use app\interfaces\RendererInterface;
 use app\services\Hash;
 use app\models\records\User;
 
+/**
+ * Контроллер, управляющий авторизацией
+ * Class AuthController
+ * @package app\controllers
+ *
+ * @property $hash Объект, управляющий хэшированием
+ */
 class AuthController extends Controller
 {
     /** @var Hash  */

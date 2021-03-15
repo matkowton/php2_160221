@@ -1,24 +1,23 @@
 <?php
 
 require "../config/main.php";
-require "../services/Autoloader.php";
 require "../vendor/autoload.php";
-spl_autoload_register([new \app\services\Autoloader(), 'loadClass']);
 session_start();
 
-if (!$requestUri = preg_replace(['#^/#', '#[?].*#', '#/$#'], "", $_SERVER['REQUEST_URI'])) {
-    $requestUri = DEFAULT_CONTROLLER;
-}
+$request = new \app\base\Request();
 
-$parts = explode("/", $requestUri);
-$controllerName = $parts[0];
-$action = $parts[1];
+$controllerName = $request->getControllerName() ?: DEFAULT_CONTROLLER;
+$action = $request->getActionName();
 
 $controllerClass = "app\controllers\\" . ucfirst($controllerName) . "Controller";
 
-if(class_exists($controllerClass)) {
+if (class_exists($controllerClass)) {
     /** @var \app\controllers\ProductController $controller */
     $controller = new $controllerClass(new \app\services\renderers\TemplateRenderer());
     //$controller = new $controllerClass(new \app\services\renderers\TwigRenderer());
-    $controller->run($action);
+    try {
+        $controller->run($action);
+    } catch (\app\exceptions\ActionNotFoundException $exception) {
+        echo "Поймал !!! Произошла ошибка {$exception->getMessage()}";
+    }
 }
