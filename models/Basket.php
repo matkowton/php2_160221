@@ -1,51 +1,74 @@
 <?php
 
-
 namespace app\models;
 
-
-use app\models\records\Product;
+use app\models\repositories\ProductRepository;
+use app\base\Session;
 
 class Basket
 {
+    /** @var Session */
+    protected $session;
+    /** @var ProductRepository */
+    protected $productRepository;
+
+    public function __construct()
+    {
+        $this->session = new Session();
+        $this->productRepository = new ProductRepository();
+    }
+
+
     /** Получение списка всех товаров в корзине */
     public function getAll(): array
     {
+        $session = new Session();
         $basket = [];
-        if (!empty($_SESSION['basket'])) {
+        $productIds = [];
+
+        if ($session->exists('basket')) {
+            $items = $session->get('basket');
             $productIds = array_filter(
-                array_keys($_SESSION['basket']),
+                array_keys($items),
                 function ($element) {
                     return is_int($element);
                 }
             );
+        }
 
-            $products = Product::getAll($productIds);
+        if ($productIds) {
+            $products = $this->productRepository->getAll($productIds);
             foreach ($products as $product) {
                 $basket[] = [
                     'product' => $product,
-                    'qty' => $_SESSION['basket'][$product->id]
+                    'qty' => $items[$product['id']]
                 ];
             }
         }
+
         return $basket;
     }
 
     /** Добавить товар в корзину */
     public function add(int $productId, int $qty)
     {
-        if(isset($_SESSION['basket'][$productId])) {
-            $_SESSION['basket'][$productId] += $qty;
+        $basket = $this->session->get('basket');
+
+        if (isset($basket[$productId])) {
+            $basket[$productId] += $qty;
         } else {
-            $_SESSION['basket'][$productId] = $qty;
+            $basket[$productId] = $qty;
         }
+        $this->session->set('basket', $basket);
     }
 
     /** Удалить товар из корзины */
     public function remove(int $productId)
     {
-        if(isset($_SESSION['basket'][$productId])){
-            unset($_SESSION['basket'][$productId]);
+        $basket = $this->session->get('basket');
+        if ($basket[$productId]) {
+            unset($basket[$productId]);
         }
+        $this->session->set('basket', $basket);
     }
 }
