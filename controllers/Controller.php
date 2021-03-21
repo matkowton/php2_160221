@@ -1,10 +1,13 @@
 <?php
+
 namespace app\controllers;
 
+use app\base\Application;
 use app\exceptions\ActionNotFoundException;
 use app\interfaces\RendererInterface;
 use app\models\records\Menu;
 use app\models\Auth;
+use app\models\repositories\MenuRepository;
 
 /**
  * Class Controller
@@ -23,18 +26,21 @@ abstract class Controller
     protected $useLayout = true;
     protected $defaultLayout = 'main';
     protected $renderer = null;
+    protected $request = null;
 
-    /** @var Auth  */
+
+    /** @var Auth */
     protected $auth;
 
     /**
      * Controller constructor.
      * @param RendererInterface $renderer
      */
-    public function __construct(RendererInterface $renderer)
+    public function __construct()
     {
-        $this->renderer = $renderer;
-        $this->auth = new Auth();
+        $this->request = Application::getInstance()->request;
+        $this->renderer = Application::getInstance()->renderer;
+        $this->auth = Application::getInstance()->auth;
     }
 
     /** Запуск экшена контроллера
@@ -54,14 +60,14 @@ abstract class Controller
     /** Подготовка параметров для лэйаута */
     protected function getLayoutParams(): array
     {
-       /* $menuAccessLevel = [0];
+        $menuAccessLevel = [0];
         if ($user = $this->auth->getCurrentUser()) {
             $menuAccessLevel[] = 2;
         } else {
             $menuAccessLevel[] = 1;
         }
-        $menu = Menu::getOrderedList($menuAccessLevel);
-        return ['menu' => $menu];*/
+        $menu = (new MenuRepository())->getOrderedList($menuAccessLevel);
+        return ['menu' => $menu];
     }
 
     /** Логика рендеренга (с лэйаутом/без) */
@@ -69,7 +75,7 @@ abstract class Controller
     {
         $content = $this->renderer->render($template, $params);
         if ($this->useLayout) {
-            //$params = $this->getLayoutParams();
+            $params = $this->getLayoutParams();
             $params['content'] = $content;
             return $this->renderer->render('layouts/' . $this->defaultLayout, $params);
         }

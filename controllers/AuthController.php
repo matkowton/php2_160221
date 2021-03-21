@@ -2,7 +2,7 @@
 
 
 namespace app\controllers;
-use app\interfaces\RendererInterface;
+use app\models\repositories\UserRepository;
 use app\services\Hash;
 use app\models\records\User;
 
@@ -18,20 +18,20 @@ class AuthController extends Controller
     /** @var Hash  */
     protected $hash;
 
-    public function __construct(RendererInterface $renderer)
+    public function __construct()
     {
-        parent::__construct($renderer);
+        parent::__construct();
         $this->hash = new Hash();
     }
 
     /** Страничка логина/авторизация */
     public function actionLogin()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $login = $_POST['login'];
-            $password = $this->hash->make($_POST['password']);
+        if ($this->request->isPost()) {
+            $login = $this->request->post('login');
+            $password = $this->hash->make($this->request->post('password'));
 
-            if ($user = User::getByLoginPassword($login, $password)) {
+            if ($user = (new UserRepository())->getByLoginPassword($login, $password)) {
                 $this->auth->authById($user->id);
                 $this->redirect("/");
             } else {
@@ -51,15 +51,15 @@ class AuthController extends Controller
     /** Регистрация нового пользователя */
     public function actionRegister()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $login = $_POST['login'];
-            $password = $_POST['password'];
-            $confirmPassword = $_POST['confirm_password'];
+        if ($this->request->isPost()) {
+            $login = $this->request->post('login');
+            $password = $this->request->post('password');
+            $confirmPassword = $this->request->post('confirm_password');
             if ($password == $confirmPassword) {
                 $user = new User();
                 $user->login = $login;
                 $user->password = $this->hash->make($password);
-                $user->save();
+                (new UserRepository())->save($user);
                 $this->auth->authById($user->id);
                 $this->redirect("/profile");
             }

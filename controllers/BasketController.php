@@ -17,9 +17,9 @@ class BasketController extends Controller
     /** @var Basket */
     protected $basket;
 
-    public function __construct(RendererInterface $renderer)
+    public function __construct()
     {
-        parent::__construct($renderer);
+        parent::__construct();
         $this->basket = new Basket();
     }
 

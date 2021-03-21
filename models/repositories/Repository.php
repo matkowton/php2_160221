@@ -4,6 +4,7 @@
 namespace app\models\repositories;
 
 
+use app\base\Application;
 use app\interfaces\RepositoryInterface;
 use app\models\records\Record;
 use app\services\Db;
@@ -26,7 +27,7 @@ abstract class Repository implements RepositoryInterface
      */
     public function __construct()
     {
-        $this->db = Db::getInstance();
+        $this->db = Application::getInstance()->connection;
         $this->tableName = $this->getTableName();
     }
 
@@ -121,6 +122,6 @@ abstract class Repository implements RepositoryInterface
 
     /** Выполнить запрос, получив в результате набор объектов текущего класса */
     protected function getQuery(string $sql, array $params = []) {
-        return Db::getInstance()->queryAll($sql, $params, $this->getRecordClass());
+        return $this->db->queryAll($sql, $params, $this->getRecordClass());
     }
 }

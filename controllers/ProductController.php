@@ -4,7 +4,7 @@
 namespace app\controllers;
 
 //product/card
-use app\base\Request;
+use app\base\Application;
 use app\models\records\Product;
 use app\models\repositories\ProductRepository;
 
@@ -20,7 +20,8 @@ class ProductController extends Controller
     /** Карточка товара */
     public function actionCard()
     {
-        $id = (new Request())->get('id');
+        $id = $this->request->get('id');
+
         /** @var Product $product */
         $product = (new ProductRepository())->getById($id);
         echo $this->render('card', ['product' => $product]);

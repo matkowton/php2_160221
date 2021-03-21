@@ -1,13 +1,19 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <?php include VIEWS_DIR . "blocks/head.php";?>
+    <?= \app\base\Application::getInstance()
+        ->renderer
+        ->render('blocks/head')
+    ?>
 </head>
 <body>
 <div class="row justify-content-center">
     <div class="col-md-6">
         <header>
-            <?php //include VIEWS_DIR . "blocks/menu.php";?>
+            <?= \app\base\Application::getInstance()
+                ->renderer
+                ->render('blocks/menu', ['menu' => $menu])
+            ?>
         </header>
         <main>
             <?=$content?>

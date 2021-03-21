@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\base\Application;
 use app\models\repositories\ProductRepository;
 use app\base\Session;
 
@@ -14,7 +15,7 @@ class Basket
 
     public function __construct()
     {
-        $this->session = new Session();
+        $this->session = Application::getInstance()->session;
         $this->productRepository = new ProductRepository();
     }
 
@@ -22,12 +23,11 @@ class Basket
     /** Получение списка всех товаров в корзине */
     public function getAll(): array
     {
-        $session = new Session();
         $basket = [];
         $productIds = [];
 
-        if ($session->exists('basket')) {
-            $items = $session->get('basket');
+        if ($this->session->exists('basket')) {
+            $items = $this->session->get('basket');
             $productIds = array_filter(
                 array_keys($items),
                 function ($element) {
@@ -41,7 +41,7 @@ class Basket
             foreach ($products as $product) {
                 $basket[] = [
                     'product' => $product,
-                    'qty' => $items[$product['id']]
+                    'qty' => $items[$product->id]
                 ];
             }
         }

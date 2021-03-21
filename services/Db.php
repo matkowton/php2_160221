@@ -2,22 +2,27 @@
 
 namespace app\services;
 
-use app\traits\SingletonTrait;
-
 class Db
 {
-    use SingletonTrait;
-
-    private $config = [
-        'driver' => 'mysql',
-        'host' => '127.0.0.1',
-        'login' => 'root',
-        'password' => 'root',
-        'dbName' => 'main_db',
-        'charset' => 'utf8',
-    ];
+    private $config;
 
     protected $connection = null;
+
+    /**
+     * Db constructor.
+     * @param $config
+     */
+    public function __construct($driver, $host, $login, $password, $dbname, $charset = 'utf8')
+    {
+        $this->config = [
+            'driver' => $driver,
+            'host' => $host,
+            'login' => $login,
+            'password' => $password,
+            'dbName' => $dbname,
+            'charset' => $charset,
+        ];
+    }
 
     protected function getConnection()
     {

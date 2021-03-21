@@ -20,6 +20,7 @@ class Request
     protected $requestString = '';
     protected $controllerName = null;
     protected $actionName = null;
+    protected $requestMethod;
     protected $isPost = false;
     protected $isGet = true;
     protected $isAjax = false;
@@ -34,6 +35,7 @@ class Request
     public function __construct()
     {
         $this->requestString = $_SERVER['REQUEST_URI'];
+        $this->requestMethod = $_SERVER['REQUEST_METHOD'];
         $this->parseRequestString();
     }
 
@@ -71,5 +73,15 @@ class Request
     public function param(string $name)
     {
         return $_REQUEST[$name];
+    }
+
+    public function isGet()
+    {
+        return $this->requestMethod == 'GET';
+    }
+
+    public function isPost()
+    {
+        return $this->requestMethod == 'POST';
     }
 }

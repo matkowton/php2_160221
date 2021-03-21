@@ -11,12 +11,17 @@ class Session
      */
     public function __construct()
     {
-        $this->openSession();
+        $this->open();
     }
 
-    public function openSession()
+    public function open()
     {
         session_start();
+    }
+
+    public function destroy()
+    {
+        session_destroy();
     }
 
     public function set(string $key, $value): void
@@ -29,11 +34,13 @@ class Session
         return isset($_SESSION[$key]) ? $_SESSION[$key] : $default;
     }
 
-
     public function exists(string $key): bool
     {
         return isset($_SESSION[$key]);
     }
 
-
+    public function remove(string $key)
+    {
+        unset($_SESSION[$key]);
+    }
 }
