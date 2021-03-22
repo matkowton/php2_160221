@@ -70,7 +70,7 @@ abstract class Repository implements RepositoryInterface
         $columns = [];
 
         foreach ($record as $key => $value) {
-            if(in_array($key, $record->excludedProperties)) {
+            if(in_array($key, $record->getExcludetProprties())) {
                 continue;
             }
 
@@ -96,7 +96,7 @@ abstract class Repository implements RepositoryInterface
         $setSection = [];
 
         foreach ($record as $key => $value) {
-            if(in_array($key, $record->excludedProperties)) {
+            if(in_array($key, $record->getExcludetProprties())) {
                 continue;
             }
 

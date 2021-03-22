@@ -13,9 +13,14 @@ use app\services\Db;
  */
 abstract class Record
 {
-    public $excludedProperties =
+    protected $excludedProperties =
         [
             'db',
             'tableName'
         ];
+
+    public function getExcludetProprties()
+    {
+        return $this->excludedProperties;
+    }
 }
