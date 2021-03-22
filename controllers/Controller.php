@@ -28,7 +28,6 @@ abstract class Controller
     protected $renderer = null;
     protected $request = null;
 
-
     /** @var Auth */
     protected $auth;
 

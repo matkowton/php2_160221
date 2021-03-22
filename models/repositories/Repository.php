@@ -1,8 +1,5 @@
 <?php
-
-
 namespace app\models\repositories;
-
 
 use app\base\Application;
 use app\interfaces\RepositoryInterface;
@@ -119,6 +116,26 @@ abstract class Repository implements RepositoryInterface
             $this->update($record);
         }
     }
+
+    /** Обновить данные в базе по ИД */
+    public function updateById(int $id, array $params)
+    {
+        $tableName = static::getTableName();
+        $setSection = [];
+
+        foreach ($params as $key => $value) {
+
+            $params[":{$key}"] = $value;
+            $setSection[] = "`{$key}` = :{$key}";
+        }
+
+        $params[':id'] = $id;
+        $setSection = implode(", ", $setSection);
+
+        $sql = "UPDATE {$tableName} SET {$setSection} WHERE id = :id";
+        return $this->db->execute($sql, $params);
+    }
+
 
     /** Выполнить запрос, получив в результате набор объектов текущего класса */
     protected function getQuery(string $sql, array $params = []) {

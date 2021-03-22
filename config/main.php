@@ -26,6 +26,10 @@ return [
         'renderer' => [
             'class' => \app\services\renderers\TemplateRenderer::class,
             'viewsDir' => realpath(__DIR__ . "/../") . "/views/"
+        ],
+        'orm' => [
+            'class' => \app\base\OrmFactory::class,
+            'namespace' => '\app\models\repositories\\'
         ]
     ]
 ];

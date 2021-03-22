@@ -17,6 +17,7 @@ use app\traits\SingletonTrait;
  * @property Db $connection
  * @property Auth $auth
  * @property TemplateRenderer $renderer
+ * @property OrmFactory $orm
  */
 class Application
 {
@@ -26,23 +27,26 @@ class Application
     /** @var ComponentsFactory */
     protected $componentsFactory = null;
     protected $components = [];
+    protected $console = false;
 
     public function run(array $config)
     {
         $this->config = $config;
         $this->componentsFactory = new ComponentsFactory();
 
-        $controllerName = $this->request->getControllerName() ?: $this->getParam('default_controller');
-        $action =  $this->request->getActionName();
+        if(!$this->console) {
+            $controllerName = $this->request->getControllerName() ?: $this->getParam('default_controller');
+            $action =  $this->request->getActionName();
 
         $controllerClass = "app\controllers\\" . ucfirst($controllerName) . "Controller";
 
-        if (class_exists($controllerClass)) {
-            $controller = new $controllerClass();
-            try {
-                $controller->run($action);
-            } catch (\app\exceptions\ActionNotFoundException $exception) {
-                echo "Поймал !!! Произошла ошибка {$exception->getMessage()}";
+            if (class_exists($controllerClass)) {
+                $controller = new $controllerClass();
+                try {
+                    $controller->run($action);
+                } catch (\app\exceptions\ActionNotFoundException $exception) {
+                    echo "Поймал !!! Произошла ошибка {$exception->getMessage()}";
+                }
             }
         }
     }
@@ -63,5 +67,11 @@ class Application
     public function getParam(string $name)
     {
         return $this->config[$name];
+    }
+
+    public function setConsoleMode()
+    {
+        $this->console = true;
+        return $this;
     }
 }

@@ -10,10 +10,19 @@ use app\models\repositories\ProductRepository;
 
 class ProductController extends Controller
 {
+    protected $productRepository;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->productRepository = Application::getInstance()->orm->get('product');
+    }
+
+
     /** Каталог товаров */
     public function actionIndex()
     {
-        $products = (new ProductRepository())->getAll();
+        $products = $this->productRepository->getAll();
         echo $this->render('catalog', ['products' => $products]);
     }
 
@@ -23,7 +32,7 @@ class ProductController extends Controller
         $id = $this->request->get('id');
 
         /** @var Product $product */
-        $product = (new ProductRepository())->getById($id);
+        $product = $this->productRepository->getById($id);
         echo $this->render('card', ['product' => $product]);
     }
 }

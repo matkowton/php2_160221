@@ -2,6 +2,7 @@
 
 
 namespace app\controllers;
+use app\base\Application;
 use app\models\repositories\UserRepository;
 use app\services\Hash;
 use app\models\records\User;
@@ -31,7 +32,9 @@ class AuthController extends Controller
             $login = $this->request->post('login');
             $password = $this->hash->make($this->request->post('password'));
 
-            if ($user = (new UserRepository())->getByLoginPassword($login, $password)) {
+            /** @var UserRepository $rep */
+            $rep = Application::getInstance()->orm->get('user');
+            if ($user = $rep->getByLoginPassword($login, $password)) {
                 $this->auth->authById($user->id);
                 $this->redirect("/");
             } else {
@@ -56,10 +59,13 @@ class AuthController extends Controller
             $password = $this->request->post('password');
             $confirmPassword = $this->request->post('confirm_password');
             if ($password == $confirmPassword) {
+                /** @var UserRepository $rep */
+                $rep = Application::getInstance()->orm->get('user');
+
                 $user = new User();
                 $user->login = $login;
                 $user->password = $this->hash->make($password);
-                (new UserRepository())->save($user);
+                $rep->save($user);
                 $this->auth->authById($user->id);
                 $this->redirect("/profile");
             }
