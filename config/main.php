@@ -30,6 +30,13 @@ return [
         'orm' => [
             'class' => \app\base\OrmFactory::class,
             'namespace' => '\app\models\repositories\\'
+        ],
+        'cache' => [
+            'class' => \Predis\Client::class
+        ],
+        'queue' => [
+            'class' => \app\base\QueueClient::class
         ]
+
     ]
 ];

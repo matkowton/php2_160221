@@ -22,7 +22,7 @@ class ProductController extends Controller
     /** Каталог товаров */
     public function actionIndex()
     {
-        $products = $this->productRepository->getAll();
+        $products = $this->getCached();
         echo $this->render('catalog', ['products' => $products]);
     }
 
@@ -34,5 +34,20 @@ class ProductController extends Controller
         /** @var Product $product */
         $product = $this->productRepository->getById($id);
         echo $this->render('card', ['product' => $product]);
+    }
+
+    protected function getCached()
+    {
+        $key = 'products_list';
+        $cacheClient = Application::getInstance()->cache;
+
+        if ($cacheClient->exists($key)) {
+            $products =  json_decode($cacheClient->get($key));
+        } else {
+            $products = $this->productRepository->getAll();
+            $cacheClient->set($key, json_encode($products));
+            $cacheClient->expire($key, 100);
+        }
+        return $products;
     }
 }

@@ -9,7 +9,9 @@
     "description": "",
     "require": {
         "twig/twig": "^3.0",
-      "ext-json": "*"
+      "ext-json": "*",
+        "phpunit/phpunit": "^9.5",
+        "predis/predis": "^1.1"
     },
     "autoload": {
         "psr-4" : {
